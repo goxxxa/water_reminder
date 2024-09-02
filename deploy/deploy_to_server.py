@@ -7,7 +7,7 @@ class ServerDeploy:
 
         self.host = '194.87.210.193'
         self.user = 'root'
-        self.password = 'mjn6ckHLOG'
+        self.password = 'O20Yv6j9A9'
 
         self.connection = Connection(
             self.host, 

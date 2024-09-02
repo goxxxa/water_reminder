@@ -17,6 +17,10 @@ class TimeAndSize {
   TimeAndSize({required this.time, required this.size});
 }
 
+class Hui {
+  
+}
+
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 

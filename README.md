@@ -1,6 +1,6 @@
 # water_reminder
 
-A new Flutter project.
+A Water Reminder App for Telegram Mini App
 
 ## Getting Started
 
