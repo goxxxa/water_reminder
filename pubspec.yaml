@@ -87,13 +87,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/duck_1.webp
-    - assets/images/duck_2.webp
-    - assets/images/duck_3.webp
-    - assets/images/duck_4.webp
-    - assets/images/exploding_duck.webp
-    - assets/images/greeting_duck.webp
-    - assets/images/greeting_duck_stopped.png
+    - assets/images/
     
 
 

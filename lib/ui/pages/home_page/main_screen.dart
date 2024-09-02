@@ -16,6 +16,13 @@ import 'package:water_reminder/ui/pages/add_page/add_expense.dart';
 import 'package:water_reminder/ui/pages/settings_page/settings.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 
+class DuckData {
+  DucksType type;
+  bool isAnimated;
+
+  DuckData({required this.type, required this.isAnimated});
+}
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -30,6 +37,7 @@ class _MainScreenState extends State<MainScreen> {
   static const Duration skeletonizerDuration = Duration(milliseconds: 500);
 
   List<WaterContainer> waterContainers = [];
+  List<DuckData> duckContainers = [];
 
   double beginValue = 0;
   double endValue = 0;
@@ -45,6 +53,8 @@ class _MainScreenState extends State<MainScreen> {
     }
     totalWaterConsumption = waterConsumption;
   }
+
+  void test() {}
 
   void sort() {
     waterContainers.sort((first, second) {
@@ -367,22 +377,68 @@ class _MainScreenState extends State<MainScreen> {
                                                                 .userWaterConsumptionStream,
                                                             builder: (context,
                                                                 snapshot) {
-                                                              int value =
-                                                                  randomNumber
-                                                                          .nextInt(
-                                                                              5) +
-                                                                      1;
+                                                              final activeDuckTypes = DucksType
+                                                                  .values
+                                                                  .where((type) =>
+                                                                      !type
+                                                                          .toString()
+                                                                          .endsWith(
+                                                                              'Stopped') &&
+                                                                      !type
+                                                                          .toString()
+                                                                          .split('.')[
+                                                                              1]
+                                                                          .startsWith(
+                                                                              'exploding'))
+                                                                  .toList();
+                                                              final randomDuckType =
+                                                                  activeDuckTypes[
+                                                                      Random().nextInt(
+                                                                          activeDuckTypes
+                                                                              .length)];
                                                               String imageUrl =
-                                                                  'https://luminarix.space/assets/images/duck_$value.webp';
-                                                              return CachedNetworkImage(
-                                                                width: 50,
-                                                                height: 50,
-                                                                imageUrl:
-                                                                    imageUrl,
-                                                                placeholder: (context,
-                                                                        url) =>
-                                                                    const CircularProgressIndicator(),
-                                                              );
+                                                                  'https://luminarix.space/assets/images/${randomDuckType.name}.webp';
+
+                                                              return snapshot
+                                                                          .hasData &&
+                                                                      snapshot.data! >=
+                                                                          1000
+                                                                  ? FutureBuilder(
+                                                                      future: Future.delayed(const Duration(
+                                                                          seconds:
+                                                                              3)),
+                                                                      builder:
+                                                                          (context,
+                                                                              futureSnapshot) {
+                                                                        imageUrl =
+                                                                            'https://luminarix.space/assets/images/exploding_duck.webp';
+                                                                        if (futureSnapshot.connectionState ==
+                                                                            ConnectionState.done) {
+                                                                          imageUrl =
+                                                                              'https://luminarix.space/assets/images/${randomDuckType.name}.webp';
+                                                                        }
+
+                                                                        return CachedNetworkImage(
+                                                                          width:
+                                                                              50,
+                                                                          height:
+                                                                              50,
+                                                                          imageUrl:
+                                                                              imageUrl,
+                                                                          placeholder: (context, url) =>
+                                                                              const CircularProgressIndicator(),
+                                                                        );
+                                                                      })
+                                                                  : CachedNetworkImage(
+                                                                      width: 50,
+                                                                      height:
+                                                                          50,
+                                                                      imageUrl:
+                                                                          imageUrl,
+                                                                      placeholder:
+                                                                          (context, url) =>
+                                                                              const CircularProgressIndicator(),
+                                                                    );
                                                             }),
                                                         const SizedBox(
                                                             width: 20.0),

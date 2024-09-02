@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:water_reminder/telegram/telegram_connection.dart';
 //import 'package:water_reminder/telegram/telegram_connection.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 //import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,9 +15,6 @@ class TimeAndSize {
   TimeAndSize({required this.time, required this.size});
 }
 
-class Hui {
-  
-}
 
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
@@ -27,18 +22,18 @@ class FirebaseService {
   int _waterTarget = 0;
   String _userName = '';
 
-  bool isTelegram = kIsWeb;
-  late int id;
+  // bool isTelegram = kIsWeb;
+  int id = 12345;
 
-  late TelegramData telegramConnection;
+  // late TelegramData telegramConnection;
 
-  FirebaseService() {
-    if (isTelegram) {
-      telegramConnection = TelegramData();
-      id = telegramConnection.id;
+  // FirebaseService() {
+  //   if (isTelegram) {
+  //     telegramConnection = TelegramData();
+  //     id = telegramConnection.id;
 
-    }
-  }
+  //   }
+  // }
 
   Future<void> addItem(String path, WaterContainer item) async {
     await _database

@@ -81,9 +81,14 @@ class _SettingsState extends State<Settings> {
           children: [
             TextFormField(
                 controller: userNameController,
-                onChanged: (text) {
+                // onChanged: (text) {
+                //   setState(() {
+                //     userNameController.text = text;
+                //   });
+                // },
+                onSaved: (text) {
                   setState(() {
-                    userNameController.text = text;
+                    userNameController.text = text!;
                   });
                 },
                 decoration: InputDecoration(
