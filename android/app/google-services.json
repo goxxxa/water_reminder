@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "374992688661",
+    "firebase_url": "https://waterreminder-8c84b-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "waterreminder-8c84b",
+    "storage_bucket": "waterreminder-8c84b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374992688661:android:5e4146b81be8d6669a201c",
+        "android_client_info": {
+          "package_name": "com.example.water_reminder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXuEuR6dxwpF2gvQ0S_2WDjqlQlMlLFIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,1 @@
+enum Operations { add, edit }
