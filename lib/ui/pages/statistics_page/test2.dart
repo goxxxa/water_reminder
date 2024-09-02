@@ -1,19 +1,14 @@
 //import 'package:flutter_telegram_web_app/flutter_telegram_web_app.dart';
-import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:water_reminder/models/main_chart_data.dart';
-import 'package:water_reminder/ui/pages/statistics_page/main_chart.dart';
-import 'package:water_reminder/utils/string_formater.dart';
-import 'package:xrandom/xrandom.dart';
 
 import 'package:flutter/material.dart';
 
 import '../../../firebase/realtime_database.dart';
 
 class MainChartHui extends StatefulWidget {
-  //final double widgetWidth;
   const MainChartHui({super.key});
 
   @override
