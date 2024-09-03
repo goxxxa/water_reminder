@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:water_reminder/utils/convert_minutes2hours.dart';
 import 'package:water_reminder/utils/string_formater.dart';
-import 'package:xrandom/xrandom.dart';
 
-import '../../../firebase/realtime_database.dart';
-import 'time_chart_data.dart';
+import '../../../../../data/datasourses/firebase/firebase_service.dart';
+import '../../../../../data/models/time_chart_data.dart';
 import 'timeline.dart';
 
 class TimeLineChart extends StatefulWidget {
@@ -56,10 +53,10 @@ class _TimeLineChartState extends State<TimeLineChart> {
     final data = await _databaseService.getListOfWaterContainers();
     setState(() {
       for (int i = 0; i < 48; i++) {
-          _chartData.add(TimeChartData(
-              startTime: (30 * i).toHours(),
-              endTime: (30 * (i + 1)).toHours(),
-              water: '10'));
+        _chartData.add(TimeChartData(
+            startTime: (30 * i).toHours(),
+            endTime: (30 * (i + 1)).toHours(),
+            water: '10'));
         for (int j = 0; j < data.length; j++) {
           if (int.parse(_chartData[i].startTime.toMinutes()) >=
                   int.parse(data[j].time.toMinutes()) &&
@@ -72,8 +69,6 @@ class _TimeLineChartState extends State<TimeLineChart> {
         }
       }
     });
-
-    
   }
 
   @override
@@ -184,7 +179,7 @@ class _TimeLineChartState extends State<TimeLineChart> {
                           children: [
                             FutureBuilder(
                                 future: _fetchChartData(),
-                                builder: (context, snapshot) { 
+                                builder: (context, snapshot) {
                                   //debugPrint('${_chartData.toString()} hhhuuuui');
                                   return ListView.separated(
                                       itemCount: snapshot.hasData

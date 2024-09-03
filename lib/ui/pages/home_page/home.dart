@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:water_reminder/models/enumerates.dart';
+import 'package:water_reminder/data/models/enums/enumerates.dart';
 import 'package:water_reminder/ui/pages/add_page/add_expense.dart';
 import '../statistics_page/statistic.dart';
 import 'main_screen.dart';

@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:water_reminder/models/water_container_data.dart';
+import 'package:water_reminder/data/models/water_container_data.dart';
 
-import '../../../firebase/realtime_database.dart';
-import '../../../models/enumerates.dart';
+import '../../../data/datasourses/firebase/firebase_service.dart';
+import '../../../data/models/enums/enumerates.dart';
 
 class ExpenseManager extends StatefulWidget {
   const ExpenseManager(

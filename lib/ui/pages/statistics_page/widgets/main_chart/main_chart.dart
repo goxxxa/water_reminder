@@ -1,18 +1,14 @@
-//import 'package:flutter_telegram_web_app/flutter_telegram_web_app.dart';
-
-import 'package:flutter/widgets.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-import 'package:water_reminder/models/main_chart_data.dart';
+import 'package:water_reminder/data/models/main_chart_data.dart';
 
 import 'package:flutter/material.dart';
 
-import '../../../firebase/realtime_database.dart';
+import '../../../../../data/datasourses/firebase/firebase_service.dart';
 
-class MainChartHui extends StatefulWidget {
-  const MainChartHui({super.key});
+class MainChart extends StatefulWidget {
+  const MainChart({super.key});
 
   @override
-  State<MainChartHui> createState() => _MainChartHuiState();
+  State<MainChart> createState() => _MainChartState();
 }
 
 class VisibleItemsData {
@@ -29,7 +25,7 @@ class VisibleItemsData {
       {required this.itemIndex, required this.startX, required this.endX});
 }
 
-class _MainChartHuiState extends State<MainChartHui> {
+class _MainChartState extends State<MainChart> {
   static const Duration duration = Duration(seconds: 2);
 
   List<MainChartData> mainChartItemsList = [];

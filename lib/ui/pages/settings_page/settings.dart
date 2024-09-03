@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:water_reminder/firebase/realtime_database.dart';
+import 'package:water_reminder/data/datasourses/firebase/firebase_service.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

@@ -1,11 +1,11 @@
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:water_reminder/models/main_chart_data.dart';
+import 'package:water_reminder/data/models/main_chart_data.dart';
 import 'package:xrandom/xrandom.dart';
 
 import 'package:flutter/material.dart';
 
-import '../../../firebase/realtime_database.dart';
+import '../../../../data/datasourses/firebase/firebase_service.dart';
 
 class MainChart extends StatefulWidget {
   const MainChart({super.key});

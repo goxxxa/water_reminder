@@ -6,15 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 //import 'package:flutter/foundation.dart' show kIsWeb;
 
-import '../models/water_container_data.dart';
-
-class TimeAndSize {
-  String time;
-  String size;
-
-  TimeAndSize({required this.time, required this.size});
-}
-
+import '../../models/time_size_data.dart';
+import '../../models/water_container_data.dart';
 
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;

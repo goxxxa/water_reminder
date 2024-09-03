@@ -1,8 +1,4 @@
-import 'package:flutter/scheduler.dart';
-import 'package:intl/intl.dart';
-
 enum Operations { add, edit }
-
 
 enum DucksType {
   greetingDuck,
@@ -17,8 +13,6 @@ enum DucksType {
   happyDuckStopped,
   sweetheartDuck,
   sweetheartDuckStopped;
-
-
 
   String get stoppedImage {
     switch (this) {

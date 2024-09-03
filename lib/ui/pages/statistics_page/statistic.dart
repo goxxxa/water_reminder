@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:countup/countup.dart';
 import 'package:flutter/material.dart';
-import 'package:water_reminder/ui/pages/statistics_page/timeline_chart.dart';
+import 'package:water_reminder/ui/pages/statistics_page/widgets/timeline_tracker/tracker.dart';
 
-import '../../../firebase/realtime_database.dart';
-import 'progress_bar.dart';
-import 'test2.dart';
+import '../../../data/datasourses/firebase/firebase_service.dart';
+import 'widgets/progress_bar/progress_bar.dart';
+import 'widgets/main_chart/main_chart.dart';
 
 class StatScreen extends StatefulWidget {
   const StatScreen({super.key});
@@ -66,7 +66,7 @@ class _StatScreenState extends State<StatScreen> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                const MainChartHui(),
+                const MainChart(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Column(children: [
