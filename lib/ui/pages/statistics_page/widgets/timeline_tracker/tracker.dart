@@ -35,10 +35,9 @@ class _TimeLineChartState extends State<TimeLineChart> {
 
   final FirebaseService _databaseService = FirebaseService();
 
-  List<TimeChartData> _chartData = [];
+  final List<TimeChartData> _chartData = [];
 
   static Offset infoContainerPosition = Offset.zero;
-  static Size size = Size.zero;
   final GlobalKey _progressBarKey = GlobalKey();
 
   @override

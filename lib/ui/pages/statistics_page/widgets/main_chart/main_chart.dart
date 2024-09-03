@@ -57,10 +57,6 @@ class _MainChartState extends State<MainChart> {
     return 1;
   }
 
-  void updateChartItemsHeight() {
-    int maxHeight = getMaxHeightOfElement();
-  }
-
   void updatePickerPosition(double currentPickerPosition) {
     getChartItemsPositions(scrollController.offset);
     for (final item in visibleItems) {

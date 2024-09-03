@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_telegram_web_app/flutter_telegram_web_app.dart' as tg;
 
 class TelegramService {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
 
   String? name = tg.initDataUnsafe.user?.first_name;
   int id = tg.initDataUnsafe.user!.id;

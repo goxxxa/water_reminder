@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'data/datasourses/firebase/firebase_options.dart';
+import 'data/datasourses/firebase_options.dart';
 import 'package:water_reminder/ui/pages/home_page/home.dart';
 
 void main() async {

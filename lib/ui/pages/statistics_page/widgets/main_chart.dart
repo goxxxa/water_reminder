@@ -44,7 +44,6 @@ class _MainChartState extends State<MainChart> {
   }
 
   double dx = 50;
-  final List<int> _visibleItems = [];
 
   void testData() {
     var test = _databaseService.getDataForMainChart();
@@ -69,83 +68,82 @@ class _MainChartState extends State<MainChart> {
   @override
   Widget build(BuildContext context) {
     return Skeletonizer(
-      child: Container(
-          child: GestureDetector(
-        onTapDown: (TapDownDetails details) {
-          setState(() {
-            dx = details.localPosition.dx;
-          });
-        },
-        child: Stack(
-          children: [
-            AnimatedPositioned(
-              duration: const Duration(microseconds: 0),
-              top: 50,
-              left: dx,
-              child: Container(
-                width: 20,
-                height: 80,
-                decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                    borderRadius: BorderRadius.circular(20)),
+      child: GestureDetector(
+              onTapDown: (TapDownDetails details) {
+      setState(() {
+        dx = details.localPosition.dx;
+      });
+              },
+              child: Stack(
+      children: [
+        AnimatedPositioned(
+          duration: const Duration(microseconds: 0),
+          top: 50,
+          left: dx,
+          child: Container(
+            width: 20,
+            height: 80,
+            decoration: BoxDecoration(
+                color: Colors.grey.shade500,
+                borderRadius: BorderRadius.circular(20)),
+          ),
+        ),
+        ScrollablePositionedList.separated(
+          itemCount: 10,
+          //physics: const NeverScrollableScrollPhysics(),
+          separatorBuilder: (context, int index) {
+            return const VerticalDivider(
+              color: Colors.transparent,
+              width: 20,
+            );
+          },
+          scrollDirection: Axis.horizontal,
+          reverse: true,
+          itemBuilder: (context, int index) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                AnimatedContainer(
+                  duration: duration,
+                  width: 10,
+                  height:
+                      double.parse(mainChartItemsList[index].totalWater),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(mainChartItemsList[index].date)
+              ],
+            );
+          },
+          itemPositionsListener: itemPositionsListener,
+        ),
+        // const Center(
+        //   child: Divider(
+        //     color: Colors.black,
+        //     thickness: 5,
+        //   ),
+        // ),
+        // const Align(
+        //   alignment: Alignment.topCenter,
+        //   child: Divider(
+        //     thickness: 2,
+        //     color: Colors.black,
+        //   ),
+        // ),
+        // const Align(
+        //   alignment: Alignment.bottomCenter,
+        //   child: Divider(
+        //     color: Colors.black,
+        //     thickness: 5,
+        //   ),
+        // ),
+      ],
               ),
             ),
-            ScrollablePositionedList.separated(
-              itemCount: 10,
-              //physics: const NeverScrollableScrollPhysics(),
-              separatorBuilder: (context, int index) {
-                return const VerticalDivider(
-                  color: Colors.transparent,
-                  width: 20,
-                );
-              },
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              itemBuilder: (context, int index) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    AnimatedContainer(
-                      duration: duration,
-                      width: 10,
-                      height:
-                          double.parse(mainChartItemsList[index].totalWater),
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.tertiary,
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(mainChartItemsList[index].date)
-                  ],
-                );
-              },
-              itemPositionsListener: itemPositionsListener,
-            ),
-            // const Center(
-            //   child: Divider(
-            //     color: Colors.black,
-            //     thickness: 5,
-            //   ),
-            // ),
-            // const Align(
-            //   alignment: Alignment.topCenter,
-            //   child: Divider(
-            //     thickness: 2,
-            //     color: Colors.black,
-            //   ),
-            // ),
-            // const Align(
-            //   alignment: Alignment.bottomCenter,
-            //   child: Divider(
-            //     color: Colors.black,
-            //     thickness: 5,
-            //   ),
-            // ),
-          ],
-        ),
-      )),
     );
   }
 }

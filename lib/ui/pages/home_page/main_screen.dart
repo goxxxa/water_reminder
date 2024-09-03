@@ -11,11 +11,12 @@ import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:water_reminder/data/datasourses/firebase/firebase_service.dart';
 import 'package:water_reminder/data/models/water_container_data.dart';
-import 'package:water_reminder/ui/pages/add_page/add_expense.dart';
+import 'package:water_reminder/ui/pages/expanse_manager_page/expense_manager.dart';
 import 'package:water_reminder/ui/pages/settings_page/settings.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 
-import '../../../data/models/enumerates.dart';
+import '../../../data/models/enums/ducks_type.dart';
+import '../../../data/models/enums/operations.dart';
 
 class GifPlayer extends StatelessWidget {
   final String fileName;
