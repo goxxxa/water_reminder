@@ -23,7 +23,7 @@ class ServerDeploy:
         print('[I] Compiling flutter web project...')
 
         result = subprocess.run(['cd', 'C:\\Users\\gomol\\FlutterProjects\\water_reminder\\water_reminder'], shell=True)
-        result = subprocess.run(['flutter', 'build', 'web'], shell=True)
+        result = subprocess.run(['flutter', 'build', 'web', '--wasm'], shell=True)
 
         print('[I] Build is finished...')
 

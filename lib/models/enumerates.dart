@@ -1,4 +1,8 @@
+import 'package:flutter/scheduler.dart';
+import 'package:intl/intl.dart';
+
 enum Operations { add, edit }
+
 
 enum DucksType {
   greetingDuck,
@@ -13,6 +17,27 @@ enum DucksType {
   happyDuckStopped,
   sweetheartDuck,
   sweetheartDuckStopped;
+
+
+
+  String get stoppedImage {
+    switch (this) {
+      case DucksType.greetingDuck:
+        return 'greeting_duck_stopped';
+      case DucksType.explodingDuck:
+        return 'exploding_duck_stopped';
+      case DucksType.lovingDuck:
+        return 'loving_duck_stopped';
+      case DucksType.cheersDuck:
+        return 'cheers_duck_stopped';
+      case DucksType.happyDuck:
+        return 'happy_duck_stopped';
+      case DucksType.sweetheartDuck:
+        return 'sweetheart_duck_stopped';
+      default:
+        return '';
+    }
+  }
 
   String get name {
     switch (this) {

@@ -16,6 +16,20 @@ import 'package:water_reminder/ui/pages/add_page/add_expense.dart';
 import 'package:water_reminder/ui/pages/settings_page/settings.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 
+class GifPlayer extends StatelessWidget {
+  final String fileName;
+  const GifPlayer({required this.fileName, super.key});
+
+  void stop() {}
+
+  void play() {}
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(imageUrl: fileName);
+  }
+}
+
 class DuckData {
   DucksType type;
   bool isAnimated;
@@ -278,6 +292,11 @@ class _MainScreenState extends State<MainScreen> {
             child: StreamBuilder(
                 stream: _databaseService.userWaterContainersStream,
                 builder: (context, snapshot) {
+                  bool isAdded =
+                      (snapshot.hasData && snapshot.data != waterContainers)
+                          ? true
+                          : false;
+
                   waterContainers = snapshot.data ??
                       List.filled(
                           4,
@@ -289,6 +308,7 @@ class _MainScreenState extends State<MainScreen> {
                     sort();
                     getTotalWaterConsumption();
                   }
+
                   return snapshot.hasData && waterContainers.isNotEmpty
                       ? Skeletonizer(
                           enabled: !snapshot.hasData,

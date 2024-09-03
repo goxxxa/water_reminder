@@ -1,7 +1,7 @@
 class UserData {
   String name;
-  String weight;
-  String target;
+  int weight;
+  int target;
 
   UserData({required this.name, required this.weight, required this.target});
 }
