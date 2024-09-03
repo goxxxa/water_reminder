@@ -1,5 +1,3 @@
-enum Operations { add, edit }
-
 enum DucksType {
   greetingDuck,
   greetingDuckStopped,

@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:water_reminder/data/models/water_container_data.dart';
 
 import '../../../data/datasourses/firebase/firebase_service.dart';
-import '../../../data/models/enums/enumerates.dart';
+import '../../../data/models/enumerates.dart';
 
 class ExpenseManager extends StatefulWidget {
   const ExpenseManager(
