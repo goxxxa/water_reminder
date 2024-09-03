@@ -294,10 +294,6 @@ class _MainScreenState extends State<MainScreen> {
             child: StreamBuilder(
                 stream: _databaseService.userWaterContainersStream,
                 builder: (context, snapshot) {
-                  bool isAdded =
-                      (snapshot.hasData && snapshot.data != waterContainers)
-                          ? true
-                          : false;
 
                   waterContainers = snapshot.data ??
                       List.filled(
