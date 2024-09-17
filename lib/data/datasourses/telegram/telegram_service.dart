@@ -1,16 +1,19 @@
 import 'package:flutter_telegram_web_app/flutter_telegram_web_app.dart' as tg;
 
 class TelegramService {
+  late int _userId;
+  late String _userName;
 
-  String? name = tg.initDataUnsafe.user?.first_name;
-  int id = tg.initDataUnsafe.user!.id;
-  String? photo = tg.initDataUnsafe.user?.photo_url;
+  TelegramService._();
+  static final TelegramService instance = TelegramService._();
 
-  String? get userName => name;
-  int get userTelegramId => id;
-  String? get userPhoto => photo;
+  Future<void> initializeApp() async {
+    _userId = tg.initDataUnsafe.user!.id;
+    _userName = tg.initDataUnsafe.user!.username;
 
-  TelegramService() {
-    tg.expand();
+    await tg.expand();
   }
+
+  int get userId => _userId;
+  String get userName => _userName;
 }

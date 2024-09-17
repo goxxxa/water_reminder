@@ -8,25 +8,19 @@ import 'package:water_reminder/utils/string_formater.dart';
 
 import '../../models/time_size_data.dart';
 import '../../models/water_container_data.dart';
+import '../telegram/telegram_service.dart';
 
 class FirebaseService {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final TelegramService _telegram = TelegramService.instance;
 
+  late int id;
   int _waterTarget = 0;
   String _userName = '';
 
-  // bool isTelegram = kIsWeb;
-  int id = 12345;
-
-  // late TelegramData telegramConnection;
-
-  // FirebaseService() {
-  //   if (isTelegram) {
-  //     telegramConnection = TelegramData();
-  //     id = telegramConnection.id;
-
-  //   }
-  // }
+  FirebaseService() {
+    id = _telegram.userId;
+  }
 
   Future<void> addItem(String path, WaterContainer item) async {
     await _database
@@ -44,6 +38,21 @@ class FirebaseService {
         .ref()
         .child('users/$id/water/${item.date}/${item.time}')
         .remove();
+  }
+
+  Future<bool> checkIsUserExists(int userId) async {
+    bool userExists = false;
+    await _database
+        .ref()
+        .orderByChild('users')
+        .equalTo(userId)
+        .once()
+        .then((snapshot) {
+      if (snapshot.snapshot.value != null) {
+        return true;
+      }
+    });
+    return userExists;
   }
 
   Future<Map<String, dynamic>> getDataForMainChart() async {

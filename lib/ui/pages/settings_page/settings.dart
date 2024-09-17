@@ -14,13 +14,14 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   final FirebaseService _database = FirebaseService();
 
-  TextEditingController userNameController = TextEditingController();
-  TextEditingController userWeightController = TextEditingController();
-  TextEditingController userWaterTargetController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _userWeightController = TextEditingController();
+  final TextEditingController _userWaterTargetController =
+      TextEditingController();
 
-  late String userName = '';
-  late String userWeight = '';
-  late String userWaterTarget = '';
+  late String _userName = '';
+  late String _userWeight = '';
+  late String _userWaterTarget = '';
 
   static const double borderRadius = 12.0;
 
@@ -31,36 +32,31 @@ class _SettingsState extends State<Settings> {
   }
 
   void initTextEditingControllers() async {
-    userName = await _database.getUserName();
-    userWeight = await _database.getUserWeight();
-    userWaterTarget = await _database.getUserTarget();
+    _userName = await _database.getUserName();
+    _userWeight = await _database.getUserWeight();
+    _userWaterTarget = await _database.getUserTarget();
     setState(() {
-      userNameController.text = userName;
-      userWeightController.text = userWeight;
-      userWaterTargetController.text = userWaterTarget;
+      _userNameController.text = _userName;
+      _userWeightController.text = _userWeight;
+      _userWaterTargetController.text = _userWaterTarget;
     });
   }
 
-  bool isChanged() {
-    if (userNameController.text == userName &&
-        userWeightController.text == userWeight &&
-        userWaterTargetController.text == userWaterTarget) {
-      return false;
-    }
-    return true;
-  }
+  bool isChanged() => !(_userNameController.text == _userName &&
+      _userWeightController.text == _userWeight &&
+      _userWaterTargetController.text == _userWaterTarget);
 
   void updateUserData() {
     Map<String, dynamic> toUpdate = {};
 
-    if (userNameController.text != userName) {
-      toUpdate['name'] = userNameController.text;
+    if (_userNameController.text != _userName) {
+      toUpdate['name'] = _userNameController.text;
     }
-    if (userWeightController.text != userWeight) {
-      toUpdate['weight'] = userWeightController.text;
+    if (_userWeightController.text != _userWeight) {
+      toUpdate['weight'] = _userWeightController.text;
     }
-    if (userWaterTargetController.text != userWaterTarget) {
-      toUpdate['target'] = userWaterTargetController.text;
+    if (_userWaterTargetController.text != _userWaterTarget) {
+      toUpdate['target'] = _userWaterTargetController.text;
     }
     _database.updateItem('users/', toUpdate);
   }
@@ -79,16 +75,11 @@ class _SettingsState extends State<Settings> {
             left: 16.0, right: 16.0, top: 16.0, bottom: 32.0),
         child: Column(
           children: [
-            TextFormField(
-                controller: userNameController,
-                // onChanged: (text) {
-                //   setState(() {
-                //     userNameController.text = text;
-                //   });
-                // },
-                onSaved: (text) {
+            TextField(
+                controller: _userNameController,
+                onChanged: (text) {
                   setState(() {
-                    userNameController.text = text!;
+                    _userNameController.text = text;
                   });
                 },
                 decoration: InputDecoration(
@@ -101,11 +92,11 @@ class _SettingsState extends State<Settings> {
             const SizedBox(
               height: 16.0,
             ),
-            TextFormField(
-                controller: userWeightController,
+            TextField(
+                controller: _userWeightController,
                 onChanged: (text) {
                   setState(() {
-                    userWeightController.text = text;
+                    _userWeightController.text = text;
                   });
                 },
                 decoration: InputDecoration(
@@ -123,11 +114,11 @@ class _SettingsState extends State<Settings> {
             const SizedBox(
               height: 8.0,
             ),
-            TextFormField(
-                controller: userWaterTargetController,
+            TextField(
+                controller: _userWaterTargetController,
                 onChanged: (text) {
                   setState(() {
-                    userWaterTargetController.text = text;
+                    _userWaterTargetController.text = text;
                   });
                 },
                 decoration: InputDecoration(

@@ -17,8 +17,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int pageIndex = 0;
 
-  Color selectedItem = Colors.blue;
-  Color unselectedItem = Colors.grey;
+  final Color selectedItem = Colors.blue;
+  final Color unselectedItem = Colors.grey;
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'data/datasourses/firebase_options.dart';
+import 'data/datasourses/firebase/firebase_options.dart';
 import 'package:water_reminder/ui/pages/home_page/home.dart';
+
+import 'data/datasourses/telegram/telegram_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  TelegramService.instance.initializeApp();
   runApp(const WaterReminderApp());
 }
 
@@ -19,8 +22,8 @@ class WaterReminderApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           colorScheme: ColorScheme.light(
-              background: Colors.grey.shade100,
-              onBackground: Colors.black,
+              surface: Colors.grey.shade100,
+              onSurface: Colors.black,
               primary: const Color.fromARGB(255, 98, 225, 250),
               secondary: const Color.fromARGB(255, 61, 127, 249),
               tertiary: const Color.fromARGB(255, 29, 94, 247),

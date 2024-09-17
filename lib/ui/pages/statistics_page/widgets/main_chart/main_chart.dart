@@ -125,13 +125,12 @@ class _MainChartState extends State<MainChart> {
               duration: const Duration(milliseconds: 100), curve: Curves.linear)
           .then((value) => {
                 isAnimating = false,
-                // mainChartItemsList[10].totalWater = 500.toString()
               });
     });
   }
 
   Future<void> _async() async {
-    //mainChartItemsList.clear();
+    mainChartItemsList.clear();
     Map<String, dynamic> uui = await _databaseService.getDataForMainChart();
     uui.forEach((key, value) {
       mainChartItemsList

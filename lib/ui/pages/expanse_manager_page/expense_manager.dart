@@ -36,7 +36,7 @@ class _ExpenseManagerState extends State<ExpenseManager> {
   bool doTimer = true;
 
   final List<int> waterContainers =
-      List.generate(200, (index) => (index + 1) * 50);
+      List.generate(201, (index) => (index) * 50);
   static const double waterContainerHeight = 50;
   static const double waterContainersBuilderHeight = waterContainerHeight * 3;
 
@@ -135,11 +135,12 @@ class _ExpenseManagerState extends State<ExpenseManager> {
                     itemCount: waterContainers.length,
                     itemBuilder: (context, int index) {
                       return Container(
+                        
                         height: waterContainerHeight,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white)),
+                            border: Border.all(color: Colors.black)),
                         child: Center(
-                          child: Text(
+                          child: Text( waterContainers[index] == 0 ? '' :
                             '${waterContainers[index]}',
                             style: TextStyle(
                               color: _highlightedIndex == index
