@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:water_reminder/data/models/enums/operations.dart';
-import 'package:water_reminder/ui/pages/expanse_manager_page/expense_manager.dart';
-import '../statistics_page/statistic.dart';
+import 'package:water_reminder/ui/pages/expanse_manager/expense_manager_page.dart';
+import '../statistics/statistic_page.dart';
 import 'main_screen.dart';
 
 class HomeScreen extends StatefulWidget {

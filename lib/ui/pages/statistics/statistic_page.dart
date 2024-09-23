@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:countup/countup.dart';
 import 'package:flutter/material.dart';
-import 'package:water_reminder/ui/pages/statistics_page/widgets/timeline_tracker/tracker.dart';
+import 'package:water_reminder/ui/pages/statistics/widgets/timeline_tracker/tracker.dart';
 
 import '../../../data/datasourses/firebase/firebase_service.dart';
 import 'widgets/progress_bar/progress_bar.dart';
@@ -17,14 +17,25 @@ class StatScreen extends StatefulWidget {
 }
 
 class _StatScreenState extends State<StatScreen> {
-  final FirebaseService _databaseService = FirebaseService();
+  FirebaseService? _databaseService;
 
-  final ConfettiController _confettiController =
-      ConfettiController(duration: const Duration(seconds: 2));
+  ConfettiController? _confettiController;
 
   static Offset confettiWidgetPosition = Offset.zero;
   static Size size = Size.zero;
   final GlobalKey _progressBarKey = GlobalKey();
+
+  @override
+  void initState() {
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
+    _databaseService = FirebaseService();
+
+    super.initState();
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => calculateConfettiPlayPosition());
+  }
 
   void calculateConfettiPlayPosition() {
     final RenderBox box =
@@ -33,14 +44,6 @@ class _StatScreenState extends State<StatScreen> {
       confettiWidgetPosition = box.localToGlobal(Offset.zero);
       size = box.size;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => calculateConfettiPlayPosition());
   }
 
   @override
@@ -81,8 +84,8 @@ class _StatScreenState extends State<StatScreen> {
                             borderRadius: BorderRadius.circular(12)),
                         child: FutureBuilder(
                             future: Future.wait([
-                              _databaseService.getUserTarget(),
-                              _databaseService.getWaterConsumption()
+                              _databaseService!.getUserTarget(),
+                              _databaseService!.getWaterConsumption()
                             ]),
                             builder: (context,
                                 AsyncSnapshot<List<dynamic>> snapshot) {
@@ -109,7 +112,7 @@ class _StatScreenState extends State<StatScreen> {
                                       : 0,
                                   currentWaterLevel:
                                       snapshot.hasData ? snapshot.data![1] : 0,
-                                  confettiController: _confettiController,
+                                  confettiController: _confettiController!,
                                 ),
                               ]);
                             })),
@@ -148,7 +151,7 @@ class _StatScreenState extends State<StatScreen> {
               left: confettiWidgetPosition.dx + (size.width / 2),
               top: confettiWidgetPosition.dy - (size.height / 2),
               child: ConfettiWidget(
-                confettiController: _confettiController,
+                confettiController: _confettiController!,
                 blastDirection: pi / 2,
                 numberOfParticles: 100,
               ),
@@ -161,7 +164,7 @@ class _StatScreenState extends State<StatScreen> {
 
   @override
   void dispose() {
-    _confettiController.dispose();
+    _confettiController?.dispose();
     super.dispose();
   }
 }

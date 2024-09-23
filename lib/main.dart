@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'data/datasourses/firebase/firebase_options.dart';
-import 'package:water_reminder/ui/pages/home_page/home.dart';
+import 'package:water_reminder/ui/pages/home/home_page.dart';
 
 import 'data/datasourses/telegram/telegram_service.dart';
 

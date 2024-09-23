@@ -1,6 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:water_reminder/ui/pages/edit_target_page/change_target.dart';
+import 'package:water_reminder/ui/pages/target_editor/target_editor_page.dart';
 
 class ProgressBar extends StatefulWidget {
   final int target;

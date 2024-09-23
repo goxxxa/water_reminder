@@ -11,8 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:water_reminder/data/datasourses/firebase/firebase_service.dart';
 import 'package:water_reminder/data/models/water_container_data.dart';
-import 'package:water_reminder/ui/pages/expanse_manager_page/expense_manager.dart';
-import 'package:water_reminder/ui/pages/settings_page/settings.dart';
+import 'package:water_reminder/ui/pages/expanse_manager/expense_manager_page.dart';
+import 'package:water_reminder/ui/pages/settings/settings_page.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 
 import '../../../data/models/enums/ducks_type.dart';
