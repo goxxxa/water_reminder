@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:water_reminder/data/models/main_chart_data.dart';
 //import 'package:water_reminder/telegram/telegram_connection.dart';
 import 'package:water_reminder/utils/string_formater.dart';
 //import 'package:flutter/foundation.dart' show kIsWeb;
@@ -29,6 +31,21 @@ class FirebaseService {
         .update(item.toDB());
   }
 
+  Future<void> updateWaterTarget(int newTarget) async {
+    await _database
+        .ref()
+        .child('users/$id/')
+        .update({'target': newTarget.toString()});
+  }
+
+  Future<void> updateWaterContainer(
+      String date, String time, int newValue) async {
+    await _database
+        .ref()
+        .child('users/$id/water/$date')
+        .update({time: newValue});
+  }
+
   Future<void> updateItem(String path, Map<String, dynamic> item) async {
     await _database.ref().child('$path/$id').update(item);
   }
@@ -40,27 +57,30 @@ class FirebaseService {
         .remove();
   }
 
+  Future<void> addUser(int userId, String userName) async {
+    await _database.ref().child('users/').update({
+      '$userId': {'name': userName, 'target': '2000', 'weight': '70'}
+    });
+  }
+
   Future<bool> checkIsUserExists(int userId) async {
     bool userExists = false;
-    await _database
-        .ref()
-        .orderByChild('users')
-        .equalTo(userId)
-        .once()
-        .then((snapshot) {
-      if (snapshot.snapshot.value != null) {
-        return true;
-      }
+    await _database.ref().child('users/').once().then((snapshot) {
+      snapshot.snapshot.children.forEach((value) {
+        if (userId.toString() == value.key) {
+          userExists = true;
+        }
+      });
     });
     return userExists;
   }
 
-  Future<Map<String, dynamic>> getDataForMainChart() async {
+  Future<List<MainChartData>> getDataForMainChart() async {
     final DatabaseReference databaseReference =
         _database.ref().child('users/$id/water');
     final DatabaseEvent databaseEvent = await databaseReference.once();
 
-    Map<String, dynamic> output = {};
+    List<MainChartData> output = [];
     int container = 0;
     for (final child in databaseEvent.snapshot.children) {
       container = 0;
@@ -68,14 +88,19 @@ class FirebaseService {
       for (final children in child.children) {
         container += int.parse(children.value.toString());
       }
-      output[child.key.toString()] = container;
+      output.add(MainChartData(
+          date: child.key.toString(), totalWater: container.toString()));
     }
 
     return output;
   }
 
-  Future<List<TimeAndSize>> getListOfWaterContainers() async {
-    final String currentDate = DateFormat('dd/MM/yy').format(DateTime.now());
+  Future<List<TimeAndSize>> getListOfWaterContainers(
+      String? currentDate) async {
+    if (currentDate!.isEmpty) {
+      currentDate = DateFormat('dd/MM/yy').format(DateTime.now());
+    }
+
     final DatabaseReference waterRef = _database.ref().child('users/$id/water');
     final DatabaseEvent currentWaterConsumption = await waterRef.once();
 

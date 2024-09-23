@@ -3,32 +3,20 @@ import 'package:water_reminder/data/models/main_chart_data.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../data/datasourses/firebase/firebase_service.dart';
+import '../../../../../data/models/visible_items_data.dart';
 
 class MainChart extends StatefulWidget {
-  const MainChart({super.key});
+  final ValueNotifier? valueNotifier;
+  const MainChart({super.key, required this.valueNotifier});
 
   @override
   State<MainChart> createState() => _MainChartState();
 }
 
-class VisibleItemsData {
-  int itemIndex;
-  double startX;
-  double endX;
-
-  @override
-  String toString() {
-    return '{Item Index: $itemIndex, Start X: $startX, End X: $endX}';
-  }
-
-  VisibleItemsData(
-      {required this.itemIndex, required this.startX, required this.endX});
-}
-
 class _MainChartState extends State<MainChart> {
   static const Duration duration = Duration(seconds: 2);
 
-  List<MainChartData> mainChartItemsList = [];
+  //List<MainChartData> mainChartItemsList = [];
   List test = [];
   List<VisibleItemsData> visibleItems = [];
 
@@ -52,10 +40,6 @@ class _MainChartState extends State<MainChart> {
   late double widgetWidth;
 
   double taretLabelPosition = 1000 / (3000 / 200);
-
-  int getMaxHeightOfElement() {
-    return 1;
-  }
 
   void updatePickerPosition(double currentPickerPosition) {
     getChartItemsPositions(scrollController.offset);
@@ -119,36 +103,20 @@ class _MainChartState extends State<MainChart> {
         break;
       }
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollController
-          .animateTo(offset,
-              duration: const Duration(milliseconds: 100), curve: Curves.linear)
-          .then((value) => {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        scrollController
+            .animateTo(offset,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.linear)
+            .then(
+              (value) => {
                 isAnimating = false,
-              });
-    });
+              },
+            );
+      },
+    );
   }
-
-  Future<void> _async() async {
-    mainChartItemsList.clear();
-    Map<String, dynamic> uui = await _databaseService.getDataForMainChart();
-    uui.forEach((key, value) {
-      mainChartItemsList
-          .add(MainChartData(date: key, totalWater: value.toString()));
-    });
-  }
-
-  // @override
-  // void initState() {
-  //   //_async();
-  //   // for (int i = 0; i < 20; i++) {
-  //   //   final random = Xrandom();
-  //   //   mainChartItemsList.add(MainChartData(
-  //   //       date: random.nextInt(30).toString(),
-  //   //       totalWater: random.nextInt(100).toString()));
-  //   // }
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -175,56 +143,60 @@ class _MainChartState extends State<MainChart> {
                   color: Colors.transparent,
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(12)),
-              child: GestureDetector(
-                onTapUp: (details) {
-                  updatePickerPosition(details.localPosition.dx);
-                },
-                child: Stack(
-                  children: [
-                    if (dx != null)
-                      AnimatedPositioned(
-                        duration: const Duration(microseconds: 1000),
-                        top: 40,
-                        left: dx! - chartPickerWidth / 2 - 2,
-                        child: Container(
-                          width: chartPickerWidth,
-                          height: 110,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade500,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Center(
-                            child: Container(
-                              height: 110,
-                              width: 2,
-                              decoration:
-                                  const BoxDecoration(color: Colors.red),
-                            ),
+              child: Stack(
+                children: [
+                  if (dx != null)
+                    AnimatedPositioned(
+                      duration: const Duration(microseconds: 1000),
+                      top: 40,
+                      left: dx! - chartPickerWidth / 2,
+                      child: Container(
+                        width: chartPickerWidth,
+                        height: 110,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade500,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Center(
+                          child: Container(
+                            height: 110,
+                            width: 2,
+                            decoration: const BoxDecoration(color: Colors.red),
                           ),
                         ),
                       ),
-                    NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification notification) {
-                        setState(() {
-                          isMoving = notification is ScrollStartNotification ||
-                              notification is ScrollEndNotification;
-                        });
-                        if (notification is ScrollEndNotification &&
-                            !isAnimating) {
-                          scrollChartToPicker();
-                        }
-                        return true;
-                      },
-                      child: FutureBuilder(
-                        future: _async(),
-                        builder: (context, AsyncSnapshot asyncSnapshot) {
-                          return ListView.builder(
-                            controller: scrollController,
-                            itemCount: mainChartItemsList.length,
-                            scrollDirection: Axis.horizontal,
-                            reverse: true,
-                            itemBuilder: (context, index) {
-                              debugPrint('${mainChartItemsList.length}');
-                              return Container(
+                    ),
+                  NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification notification) {
+                      setState(() {
+                        isMoving = notification is ScrollStartNotification ||
+                            notification is ScrollEndNotification;
+                      });
+                      if (notification is ScrollEndNotification &&
+                          !isAnimating) {
+                        scrollChartToPicker();
+                      }
+                      return true;
+                    },
+                    child: FutureBuilder<List<MainChartData>>(
+                      future: _databaseService.getDataForMainChart(),
+                      builder: (context,
+                          AsyncSnapshot<List<MainChartData>> asyncSnapshot) {
+                        return ListView.builder(
+                          controller: scrollController,
+                          itemCount: asyncSnapshot.hasData
+                              ? asyncSnapshot.data!.length
+                              : 0,
+                          scrollDirection: Axis.horizontal,
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTapUp: (details) {
+                                updatePickerPosition(details.globalPosition.dx);
+
+                                widget.valueNotifier!.value =
+                                    asyncSnapshot.data![index].date;
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black)),
                                 child: Row(
@@ -239,9 +211,8 @@ class _MainChartState extends State<MainChart> {
                                         AnimatedContainer(
                                           duration: duration,
                                           width: 25,
-                                          height: double.parse(
-                                                  mainChartItemsList[index]
-                                                      .totalWater) /
+                                          height: double.parse(asyncSnapshot
+                                                  .data![index].totalWater) /
                                               20,
                                           decoration: BoxDecoration(
                                               color: Theme.of(context)
@@ -251,9 +222,8 @@ class _MainChartState extends State<MainChart> {
                                                   BorderRadius.circular(20)),
                                           child: Center(
                                               child: Container(
-                                            height: double.parse(
-                                                mainChartItemsList[index]
-                                                    .totalWater),
+                                            height: double.parse(asyncSnapshot
+                                                .data![index].totalWater),
                                             width: 2,
                                             decoration: const BoxDecoration(
                                                 color: Colors.red),
@@ -269,19 +239,19 @@ class _MainChartState extends State<MainChart> {
                                       ],
                                     ),
                                     Container(
-                                      width: 6,
+                                      width: 10,
                                       color: Colors.transparent,
                                     ),
                                   ],
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )),
           FutureBuilder(
               future: _databaseService.getWaterConsumption(),

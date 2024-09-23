@@ -34,9 +34,10 @@ class _ExpenseManagerState extends State<ExpenseManager> {
   final FirebaseService _databaseService = FirebaseService();
 
   bool doTimer = true;
+  bool isMoving = false;
+  bool isAnimating = false;
 
-  final List<int> waterContainers =
-      List.generate(201, (index) => (index) * 50);
+  final List<int> waterContainers = List.generate(201, (index) => (index) * 50);
   static const double waterContainerHeight = 50;
   static const double waterContainersBuilderHeight = waterContainerHeight * 3;
 
@@ -49,8 +50,8 @@ class _ExpenseManagerState extends State<ExpenseManager> {
   void initState() {
     widget.operationType == Operations.add
         ? _highlightedIndex =
-            (waterContainersBuilderHeight / 2) ~/ waterContainerHeight - 2
-        : _highlightedIndex = (widget.value! ~/ waterContainerHeight) - 2;
+            (waterContainersBuilderHeight / 2) ~/ waterContainerHeight + 3
+        : _highlightedIndex = (widget.value! ~/ waterContainerHeight) - 1;
 
     _dateController.text = DateFormat('dd/MM/yy').format(DateTime.now());
     _timeController.text = DateFormat('HH:mm:ss').format(DateTime.now());
@@ -63,12 +64,10 @@ class _ExpenseManagerState extends State<ExpenseManager> {
       }
     });
 
-    if (widget.operationType == Operations.edit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.jumpTo(
-            waterContainerHeight * _highlightedIndex); //(widget.value!));
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController
+          .jumpTo(waterContainerHeight * _highlightedIndex); //(widget.value!));
+    });
 
     _scrollController.addListener(_onScroll);
 
@@ -82,9 +81,12 @@ class _ExpenseManagerState extends State<ExpenseManager> {
     for (int i = 0; i < waterContainers.length; ++i) {
       if (i * waterContainerHeight < centerX &&
           (i + 1) * waterContainerHeight > centerX) {
-        setState(() {
-          _highlightedIndex = i;
-        });
+        if (!isAnimating) {
+          setState(() {
+            _highlightedIndex = i;
+          });
+        }
+
         break;
       }
     }
@@ -104,9 +106,11 @@ class _ExpenseManagerState extends State<ExpenseManager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Добавить воду',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        title: Text(
+          widget.operationType == Operations.add
+              ? 'Добавить воду'
+              : 'Редактировать',
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -130,29 +134,47 @@ class _ExpenseManagerState extends State<ExpenseManager> {
                   borderRadius: BorderRadius.circular(15), color: Colors.white),
               child: Stack(
                 children: [
-                  ListView.builder(
-                    controller: _scrollController,
-                    itemCount: waterContainers.length,
-                    itemBuilder: (context, int index) {
-                      return Container(
-                        
-                        height: waterContainerHeight,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black)),
-                        child: Center(
-                          child: Text( waterContainers[index] == 0 ? '' :
-                            '${waterContainers[index]}',
-                            style: TextStyle(
-                              color: _highlightedIndex == index
-                                  ? Colors.black
-                                  : Colors.blue,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                  NotificationListener(
+                    onNotification: (ScrollNotification notification) {
+                      setState(() {
+                        isMoving = notification is ScrollStartNotification ||
+                            notification is ScrollEndNotification;
+                      });
+                      if (notification is ScrollEndNotification &&
+                          !isAnimating) {
+                        isAnimating = true;
+                        WidgetsBinding.instance.addPostFrameCallback((_) =>
+                            _scrollController!
+                                .animateTo((_highlightedIndex - 1) * 50,
+                                    duration: const Duration(milliseconds: 100),
+                                    curve: Curves.linear)
+                                .then((_) => isAnimating = false));
+                      }
+                      return true;
+                    },
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: waterContainers.length,
+                      itemBuilder: (context, int index) {
+                        return SizedBox(
+                          height: waterContainerHeight,
+                          child: Center(
+                            child: Text(
+                              waterContainers[index] == 0
+                                  ? ''
+                                  : '${waterContainers[index]}',
+                              style: TextStyle(
+                                color: _highlightedIndex == index
+                                    ? Colors.black
+                                    : Colors.blue,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                   Positioned(
                     top: waterContainersBuilderHeight / 2 - 20,
@@ -180,7 +202,9 @@ class _ExpenseManagerState extends State<ExpenseManager> {
                   onTap: () async {
                     DateTime? newDate = await showDatePicker(
                         context: context,
-                        initialDate: DateTime.now(),
+                        initialDate: widget.operationType == Operations.add
+                            ? DateTime.now()
+                            : DateFormat('MM_dd_yy').parse(widget.date!),
                         firstDate:
                             DateTime.now().subtract(const Duration(days: 365)),
                         lastDate:
@@ -242,15 +266,17 @@ class _ExpenseManagerState extends State<ExpenseManager> {
                   ], transform: const GradientRotation(pi / 2))),
               child: TextButton(
                   onPressed: () async {
-                    _databaseService
-                        .addItem(
+                    widget.operationType == Operations.add
+                        ? await _databaseService.addItem(
                             'users/',
                             WaterContainer(
                                 size: waterContainers[_highlightedIndex]
                                     .toString(),
                                 date: _dateController.text,
                                 time: _timeController.text))
-                        .then((value) => {Navigator.pop(context)});
+                        : _databaseService.updateWaterContainer(widget.date!,
+                            widget.time!, waterContainers[_highlightedIndex]);
+                    Navigator.of(context).pop();
                   },
                   child: const Text(
                     'Сохранить',

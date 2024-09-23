@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:water_reminder/data/datasourses/firebase/firebase_service.dart';
+import 'package:water_reminder/data/datasourses/telegram/telegram_service.dart';
 import 'package:water_reminder/data/models/enums/operations.dart';
 import 'package:water_reminder/ui/pages/expanse_manager/expense_manager_page.dart';
 import '../statistics/statistic_page.dart';
@@ -16,9 +18,24 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int pageIndex = 0;
+  final FirebaseService _databaseService = FirebaseService();
 
   final Color selectedItem = Colors.blue;
   final Color unselectedItem = Colors.grey;
+
+  void checkUser() async {
+    if (!await _databaseService
+        .checkIsUserExists(TelegramService.instance.userId)) {
+      _databaseService.addUser(
+          TelegramService.instance.userId, TelegramService.instance.userName);
+    }
+  }
+
+  @override
+  void initState() {
+    checkUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

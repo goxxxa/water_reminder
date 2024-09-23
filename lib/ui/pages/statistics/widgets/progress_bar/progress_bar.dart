@@ -76,9 +76,8 @@ class _ProgressBarState extends State<ProgressBar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (BuildContext context) =>
-                          const ChangeWaterTarget(
-                        currentWaterTarget: 100,
+                      builder: (BuildContext context) => ChangeWaterTarget(
+                        currentWaterTarget: widget.target,
                       ),
                     ),
                   )

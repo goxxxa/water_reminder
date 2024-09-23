@@ -20,6 +20,7 @@ class _StatScreenState extends State<StatScreen> {
   FirebaseService? _databaseService;
 
   ConfettiController? _confettiController;
+  final ValueNotifier<String> _valueNotifier = ValueNotifier('');
 
   static Offset confettiWidgetPosition = Offset.zero;
   static Size size = Size.zero;
@@ -50,7 +51,7 @@ class _StatScreenState extends State<StatScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
         child: Stack(
           children: [
             Column(
@@ -69,27 +70,27 @@ class _StatScreenState extends State<StatScreen> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                const MainChart(),
+                MainChart(
+                  valueNotifier: _valueNotifier,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Column(children: [
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    Container(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 16.0,
+                      ),
+                      Container(
                         height: 150,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12)),
                         child: FutureBuilder(
-                            future: Future.wait([
-                              _databaseService!.getUserTarget(),
-                              _databaseService!.getWaterConsumption()
-                            ]),
-                            builder: (context,
-                                AsyncSnapshot<List<dynamic>> snapshot) {
-                              return Column(children: [
+                          future: _databaseService!.getWaterConsumption(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            return Column(
+                              children: [
                                 const SizedBox(
                                   height: 16.0,
                                 ),
@@ -97,8 +98,7 @@ class _StatScreenState extends State<StatScreen> {
                                   begin: 0,
                                   key: _progressBarKey,
                                   end: snapshot.hasData
-                                      ? double.parse(
-                                          snapshot.data![1].toString())
+                                      ? double.parse(snapshot.data!.toString())
                                       : 0.0,
                                   duration: const Duration(milliseconds: 2000),
                                   suffix: ' ml',
@@ -106,44 +106,59 @@ class _StatScreenState extends State<StatScreen> {
                                       fontSize: 25,
                                       fontWeight: FontWeight.w500),
                                 ),
-                                ProgressBar(
-                                  target: snapshot.hasData
-                                      ? int.parse(snapshot.data![0].toString())
-                                      : 0,
-                                  currentWaterLevel:
-                                      snapshot.hasData ? snapshot.data![1] : 0,
-                                  confettiController: _confettiController!,
+                                StreamBuilder(
+                                  stream:
+                                      _databaseService!.userWaterTargetStream,
+                                  builder: (context, streamSnapshot) {
+                                    return ProgressBar(
+                                      target: streamSnapshot.hasData
+                                          ? int.parse(
+                                              streamSnapshot.data!.toString())
+                                          : 0,
+                                      currentWaterLevel:
+                                          snapshot.hasData ? snapshot.data! : 0,
+                                      confettiController: _confettiController!,
+                                    );
+                                  },
                                 ),
-                              ]);
-                            })),
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12)),
-                      child: const Column(children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 16.0, top: 10.0),
-                          child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                'Детализация по времени суток',
-                                style: TextStyle(fontSize: 15),
-                              )),
+                              ],
+                            );
+                          },
                         ),
-                        SizedBox(
-                          height: 16,
+                      ),
+                      const SizedBox(
+                        height: 16.0,
+                      ),
+                      Container(
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 16.0, top: 10.0),
+                              child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  'Детализация по времени суток',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            TimeLineChart(
+                              valueController: _valueNotifier,
+                              width: 336,
+                            ),
+                          ],
                         ),
-                        TimeLineChart(
-                          width: 336,
-                        ),
-                      ]),
-                    ),
-                  ]),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
