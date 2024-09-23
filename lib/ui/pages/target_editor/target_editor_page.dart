@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 
 class ChangeWaterTarget extends StatefulWidget {
-  const ChangeWaterTarget({super.key});
+  final int currentWaterTarget;
+  const ChangeWaterTarget({super.key, required this.currentWaterTarget});
 
   @override
   State<ChangeWaterTarget> createState() => _ChangeWaterTargetState();
 }
 
 class _ChangeWaterTargetState extends State<ChangeWaterTarget> {
-  final ScrollController _scrollController = ScrollController();
-  late int _highlightedIndex = 1;
+  ScrollController? _scrollController;
+  late final int _highlightedIndex = 1;
 
   final List<int> waterContainers =
       List.generate(200, (index) => (index + 1) * 50);
   static const double waterContainerHeight = 50;
   static const double waterContainersBuilderHeight = waterContainerHeight * 3;
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

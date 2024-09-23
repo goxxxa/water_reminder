@@ -14,6 +14,6 @@ class TelegramService {
     await tg.expand();
   }
 
-  int get userId => _userId;
-  String get userName => _userName;
+  int get userId => 12345;
+  String get userName => 'goxa';
 }

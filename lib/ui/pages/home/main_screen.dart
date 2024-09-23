@@ -18,19 +18,6 @@ import 'package:water_reminder/utils/string_formater.dart';
 import '../../../data/models/enums/ducks_type.dart';
 import '../../../data/models/enums/operations.dart';
 
-class GifPlayer extends StatelessWidget {
-  final String fileName;
-  const GifPlayer({required this.fileName, super.key});
-
-  void stop() {}
-
-  void play() {}
-
-  @override
-  Widget build(BuildContext context) {
-    return CachedNetworkImage(imageUrl: fileName);
-  }
-}
 
 class DuckData {
   DucksType type;
@@ -69,8 +56,6 @@ class _MainScreenState extends State<MainScreen> {
     }
     totalWaterConsumption = waterConsumption;
   }
-
-  void test() {}
 
   void sort() {
     waterContainers.sort((first, second) {

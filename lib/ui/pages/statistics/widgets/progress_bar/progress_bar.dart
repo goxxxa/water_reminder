@@ -1,6 +1,7 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:water_reminder/ui/pages/target_editor/target_editor_page.dart';
+import 'dart:math';
 
 class ProgressBar extends StatefulWidget {
   final int target;
@@ -43,10 +44,12 @@ class _ProgressBarState extends State<ProgressBar> {
               child: AnimatedContainer(
                 duration: duration,
                 width: widget.target != 0
-                    ? (MediaQuery.of(context).size.width / 1.3) -
-                        ((MediaQuery.of(context).size.width / 1.3) /
-                            widget.target *
-                            widget.currentWaterLevel)
+                    ? max(
+                        0,
+                        (MediaQuery.of(context).size.width / 1.3) -
+                            ((MediaQuery.of(context).size.width / 1.3) /
+                                widget.target *
+                                widget.currentWaterLevel))
                     : MediaQuery.of(context).size.width / 1.3,
                 height: 40,
                 decoration: BoxDecoration(color: Colors.grey[400]),
@@ -74,7 +77,9 @@ class _ProgressBarState extends State<ProgressBar> {
                     context,
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) =>
-                          const ChangeWaterTarget(),
+                          const ChangeWaterTarget(
+                        currentWaterTarget: 100,
+                      ),
                     ),
                   )
                 },
