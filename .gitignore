@@ -30,7 +30,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-/lib/firebase/firebase_options.dart
+/lib/data/datasourses/firebase/firebase_options.dart
 /lib/deploy
 
 # Symbolication related

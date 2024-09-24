@@ -6,8 +6,8 @@ extension Minutes2Hours on int {
   }
 
   String toMinutes() {
-    var hours = this.toString().split(':')[0];
-    var minutes = this.toString().split(':')[1];
+    var hours = toString().split(':')[0];
+    var minutes = toString().split(':')[1];
     return hours * 60 + minutes;
   }
 }
