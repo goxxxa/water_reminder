@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:water_reminder/data/models/main_chart_data.dart';
 
 import 'package:flutter/material.dart';
@@ -28,11 +29,13 @@ class _MainChartState extends State<MainChart> {
   final ScrollController scrollController = ScrollController();
   final FirebaseService _databaseService = FirebaseService();
 
-  double? dx;
-  double chartItemWidth = 30; //30
-  double chartDividerWidth = 7;
+  final double widgetHeight = 150;
 
-  double chartPickerWidth = 35;
+  double dx = 419;
+  double chartItemWidth = 40; //30
+  double chartDividerWidth = 15;
+
+  double chartPickerWidth = 55;
 
   late double chartBlocWidth = (chartDividerWidth * 2 + chartItemWidth);
 
@@ -51,6 +54,7 @@ class _MainChartState extends State<MainChart> {
         setState(() {
           dx = widgetWidth - ((item.endX + item.startX) / 2.0);
         });
+        debugPrint(dx.toString());
         break;
       }
     }
@@ -94,11 +98,11 @@ class _MainChartState extends State<MainChart> {
     late double offset;
     getChartItemsPositions(scrollController.offset);
     for (final item in visibleItems) {
-      if ((widgetWidth - dx!) >= item.startX &&
-          item.endX >= (widgetWidth - dx!)) {
+      if ((widgetWidth - dx) >= item.startX &&
+          item.endX >= (widgetWidth - dx)) {
         setState(() {
           offset = scrollController.offset -
-              ((widgetWidth - dx!) - ((item.endX + item.startX) / 2));
+              ((widgetWidth - dx) - ((item.endX + item.startX) / 2));
         });
         break;
       }
@@ -124,153 +128,109 @@ class _MainChartState extends State<MainChart> {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: 150,
+      height: widgetHeight,
       child: Stack(
         children: [
-          AnimatedContainer(
-            duration: duration,
+          SizedBox(
             width: widgetWidth,
-            height: taretLabelPosition,
-            child: Container(
-              width: MediaQuery.of(context).size.width - 0,
-              height: 2,
-              decoration: const BoxDecoration(color: Colors.blue),
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(microseconds: 1000),
+                  top: 0,
+                  left: dx - chartPickerWidth / 2,
+                  child: Container(
+                    width: chartPickerWidth,
+                    height: 150,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade500,
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+                NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification notification) {
+                    setState(() {
+                      isMoving = notification is ScrollStartNotification ||
+                          notification is ScrollEndNotification;
+                    });
+                    if (notification is ScrollEndNotification && !isAnimating) {
+                      scrollChartToPicker();
+                    }
+                    return true;
+                  },
+                  child: FutureBuilder<List<MainChartData>>(
+                    future: _databaseService.getDataForMainChart(),
+                    builder: (context,
+                        AsyncSnapshot<List<MainChartData>> asyncSnapshot) {
+                      return ListView.builder(
+                        controller: scrollController,
+                        itemCount: asyncSnapshot.hasData
+                            ? asyncSnapshot.data!.length
+                            : 0,
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        itemBuilder: (context, index) {
+                          if (asyncSnapshot.hasData) {
+                            asyncSnapshot.data!.sort((a, b) {
+                              DateFormat formatter = DateFormat('dd_MM_yy');
+                              DateTime dateA = formatter.parse(a.date);
+                              DateTime dateB = formatter.parse(b.date);
+                              return dateA.compareTo(dateB);
+                            });
+                          }
+                          return GestureDetector(
+                            onTapUp: (details) {
+                              updatePickerPosition(details.globalPosition.dx);
+
+                              widget.valueNotifier!.value =
+                                  asyncSnapshot.data![index].date;
+                            },
+                            child: SizedBox(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: chartDividerWidth,
+                                    color: Colors.transparent,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      AnimatedContainer(
+                                        duration: duration,
+                                        width: chartItemWidth,
+                                        height: double.parse(asyncSnapshot
+                                                .data![index].totalWater) /
+                                            20,
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary,
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                          '${asyncSnapshot.data![index].date.split('_')[0]}/${asyncSnapshot.data![index].date.split('_')[1]}')
+                                    ],
+                                  ),
+                                  Container(
+                                    width: chartDividerWidth,
+                                    color: Colors.transparent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
-          Container(
-              width: widgetWidth,
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12)),
-              child: Stack(
-                children: [
-                  if (dx != null)
-                    AnimatedPositioned(
-                      duration: const Duration(microseconds: 1000),
-                      top: 40,
-                      left: dx! - chartPickerWidth / 2,
-                      child: Container(
-                        width: chartPickerWidth,
-                        height: 110,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade500,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Center(
-                          child: Container(
-                            height: 110,
-                            width: 2,
-                            decoration: const BoxDecoration(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                    ),
-                  NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification notification) {
-                      setState(() {
-                        isMoving = notification is ScrollStartNotification ||
-                            notification is ScrollEndNotification;
-                      });
-                      if (notification is ScrollEndNotification &&
-                          !isAnimating) {
-                        scrollChartToPicker();
-                      }
-                      return true;
-                    },
-                    child: FutureBuilder<List<MainChartData>>(
-                      future: _databaseService.getDataForMainChart(),
-                      builder: (context,
-                          AsyncSnapshot<List<MainChartData>> asyncSnapshot) {
-                        return ListView.builder(
-                          controller: scrollController,
-                          itemCount: asyncSnapshot.hasData
-                              ? asyncSnapshot.data!.length
-                              : 0,
-                          scrollDirection: Axis.horizontal,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTapUp: (details) {
-                                updatePickerPosition(details.globalPosition.dx);
-
-                                widget.valueNotifier!.value =
-                                    asyncSnapshot.data![index].date;
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black)),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 10,
-                                      color: Colors.transparent,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        AnimatedContainer(
-                                          duration: duration,
-                                          width: 25,
-                                          height: double.parse(asyncSnapshot
-                                                  .data![index].totalWater) /
-                                              20,
-                                          decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .tertiary,
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          child: Center(
-                                              child: Container(
-                                            height: double.parse(asyncSnapshot
-                                                .data![index].totalWater),
-                                            width: 2,
-                                            decoration: const BoxDecoration(
-                                                color: Colors.red),
-                                          )),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        // Text(mainChartItemsList[index].date)
-                                        Text(index.toString().length == 1
-                                            ? '0$index'
-                                            : '$index')
-                                      ],
-                                    ),
-                                    Container(
-                                      width: 10,
-                                      color: Colors.transparent,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              )),
-          FutureBuilder(
-              future: _databaseService.getWaterConsumption(),
-              builder: (context, AsyncSnapshot snapshot) {
-                return Align(
-                  alignment: Alignment.topRight,
-                  child: AnimatedContainer(
-                    alignment: Alignment.bottomCenter,
-                    duration: duration,
-                    height: taretLabelPosition - 30.0,
-                    width: chartOffset - 2,
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        border: Border.all(color: Colors.red)),
-                    child:
-                        Text(snapshot.hasData ? snapshot.data.toString() : '0'),
-                  ),
-                );
-              }),
         ],
       ),
     );

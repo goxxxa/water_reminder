@@ -67,32 +67,6 @@ class _MainScreenState extends State<MainScreen> {
     waterContainers = waterContainers.reversed.toList();
   }
 
-  String dateValidator(String date) {
-    final timeNow = DateFormat('dd_MM_yy').format(DateTime.now());
-
-    if (timeNow == date) {
-      return 'Сегодня';
-    }
-
-    List splittedDate = date.split('_');
-    List splittedTimeNow = timeNow.split('_');
-    if (splittedDate[2] == splittedTimeNow[2] &&
-        splittedDate[1] == splittedTimeNow[1]) {
-      int first = int.parse(splittedDate[0]);
-      int second = int.parse(splittedTimeNow[0]);
-      int result = second - first;
-
-      switch (result) {
-        case 1:
-          return 'Вчера';
-        case 2:
-          return 'Позавчера';
-      }
-    }
-
-    return date;
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -107,7 +81,6 @@ class _MainScreenState extends State<MainScreen> {
                 Row(
                   children: [
                     FutureBuilder(
-                        //8560
                         future:
                             Future.delayed(const Duration(milliseconds: 2500)),
                         builder: (context, snapshot) {
